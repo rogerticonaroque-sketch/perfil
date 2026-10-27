@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Evaluación de Perfil de Proyecto | 5.º Secundaria</title>
+<style>
+:root {
+  --primary:#183b70;
+  --accent:#2864c5;
+  --bg:#f2f5fa;
+  --text:#172033;
+  --border:#dce3ee;
+  --success:#18794e;
+  --danger:#b42318;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.55 Arial,Helvetica,sans-serif
+}
+header{
+  background:linear-gradient(120deg,#142d53,#2864c5);
+  color:white;padding:25px 16px;text-align:center
+}
+header h1{margin:0 0 8px;font-size:clamp(22px,4vw,32px)}
+header p{margin:5px}
+.container{max-width:980px;margin:22px auto;padding:0 14px}
+.card{
+  background:white;border:1px solid var(--border);border-radius:15px;
+  padding:22px;margin-bottom:18px;box-shadow:0 4px 15px #162b4d0b
+}
+h2{font-size:22px;color:var(--primary);margin-top:0}
+label{display:block;font-weight:700;margin:12px 0 5px}
+input,select,button{
+  font:inherit;border-radius:8px;padding:11px;border:1px solid #bbc8da
+}
+input,select{width:100%;background:white}
+button{cursor:pointer;font-weight:700}
+button:focus,input:focus,select:focus{
+  outline:3px solid #94bafc;outline-offset:2px
+}
+.btn{background:var(--accent);color:white;border:0}
+.btn:hover{filter:brightness(.93)}
+.btn-secondary{background:#e8eef8;color:var(--primary)}
+.btn-danger{background:#b42318;color:white;border:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{padding:10px 14px;background:#edf3ff;border-radius:8px;font-weight:bold}
+#timer{font-size:24px;font-weight:800;color:var(--primary)}
+#timer.warning{color:var(--danger)}
+.progress{height:9px;background:#e4eaf3;border-radius:20px;overflow:hidden}
+#progressBar{height:100%;width:0;background:#2864c5;transition:width .2s}
+.question{border:1px solid var(--border);padding:18px;border-radius:12px;margin:18px 0}
+.question h3{font-size:17px;margin:0 0 12px}
+.question small{color:#586780}
+.option{
+ display:flex;align-items:flex-start;gap:10px;padding:10px;
+ border:1px solid var(--border);border-radius:8px;margin:8px 0;
+ cursor:pointer;font-weight:normal
+}
+.option:hover{background:#f4f7fd}
+.option input{width:auto;margin-top:5px;flex-shrink:0}
+.option:has(input:checked){border-color:var(--accent);background:#edf3ff}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.notice{padding:12px;border-radius:8px;background:#fff4d6;margin:12px 0}
+.good{color:var(--success);font-weight:bold}
+.bad{color:var(--danger);font-weight:bold}
+.muted{color:#64748b;font-size:14px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--border)}
+th{background:#edf3ff}
+.table-wrap{overflow-x:auto}
+footer{text-align:center;padding:20px;color:#64748b;font-size:13px}
+[hidden]{display:none!important}
+@media(max-width:650px){
+ .grid{grid-template-columns:1fr}
+ .card{padding:15px}
+ header{padding:20px 12px}
+}
+@media print{
+ header,#registration,#teacherLogin,.actions,footer{display:none!important}
+ body{background:white}
+ .card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>UNIDAD EDUCATIVA: EVALUACIÓN INFORMÁTICA</h1>
+  <p>5.º de Secundaria | Perfil de Proyecto</p>
+  <p>45 preguntas · 45 puntos · 45 minutos</p>
+</header>
+
+<main class="container">
+<section class="card" id="registration">
+<h2>1. Datos del estudiante</h2>
+<p>Completa tus datos antes de iniciar. La evaluación se calificará sobre 45 puntos.</p>
+<form id="studentForm">
+<div class="grid">
+<div>
+<label for="studentName">Nombre completo *</label>
+<input id="studentName" maxlength="100" required autocomplete="name"
+placeholder="Apellidos y nombres">
+</div>
+<div>
+<label for="studentCourse">Curso y paralelo *</label>
+<input id="studentCourse" maxlength="30" required placeholder="Ej. 5.º A">
+</div>
+<div>
+<label for="studentCode">Código estudiantil (opcional)</label>
+<input id="studentCode" maxlength="30" placeholder="Código o número de lista">
+</div>
+<div>
+<label for="studentDate">Fecha</label>
+<input id="studentDate" readonly>
+</div>
+</div>
+<div class="notice">
+<strong>Indicaciones:</strong> Lee cada situación, analiza las opciones y marca
+una sola respuesta. Cada pregunta correcta vale 1 punto. No se descuentan
+puntos por respuestas incorrectas.
+</div>
+<label>
+<input type="checkbox" id="acceptRules" required style="width:auto">
+ Declaro que realizaré la evaluación individualmente.
+</label>
+<button class="btn" type="submit">Iniciar evaluación</button>
+</form>
+</section>
+
+<section class="card" id="exam" hidden>
+<div class="stats">
+<div class="stat">Tiempo: <span id="timer">45:00</span></div>
+<div class="stat">Respondidas: <span id="answered">0</span>/45</div>
+<div class="stat">Valor: 45 puntos</div>
+</div>
+<div class="progress"><div id="progressBar"></div></div>
+<p class="muted">El orden de las preguntas y de sus alternativas puede variar.</p>
+<form id="examForm">
+<div id="questions"></div>
+<div class="actions">
+<button class="btn" type="submit">Finalizar y calificar</button>
+<button class="btn-secondary" type="button" id="reviewBtn">Revisar respuestas pendientes</button>
+</div>
+</form>
+</section>
+
+<section class="card" id="result" hidden>
+<h2>Resultado de la evaluación</h2>
+<div id="resultDetails"></div>
+<div class="actions">
+<button class="btn" id="printResult">Imprimir resultado</button>
+<button class="btn-secondary" id="newExam">Nueva evaluación</button>
+</div>
+</section>
+
+<section class="card" id="teacherLogin">
+<h2>2. Panel docente</h2>
+<p>Ingresa la contraseña para consultar los resultados guardados en este navegador.</p>
+<form id="loginForm">
+<label for="teacherPassword">Contraseña docente</label>
+<input id="teacherPassword" type="password" required autocomplete="current-password"
+maxlength="100" placeholder="Contraseña">
+<button class="btn" type="submit">Acceder al panel</button>
+</form>
+<p id="loginMessage" class="bad" role="status"></p>
+<p class="muted">La contraseña de demostración debe cambiarse en el código antes de usarlo.</p>
+</section>
+
+<section class="card" id="teacherPanel" hidden>
+<h2>Panel de resultados</h2>
+<p class="muted">Los datos se almacenan localmente en este navegador, no en un servidor.</p>
+<div class="stats">
+<div class="stat">Evaluaciones: <span id="recordCount">0</span></div>
+<div class="stat">Promedio: <span id="averageScore">0</span>/45</div>
+</div>
+<div class="actions">
+<button class="btn" id="exportCsv">Exportar resultados CSV</button>
+<button class="btn-secondary" id="exportJson">Copia de seguridad JSON</button>
+<button class="btn-danger" id="clearRecords">Borrar registros</button>
+<button class="btn-secondary" id="logout">Cerrar panel</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>Estudiante</th><th>Curso</th><th>Nota</th>
+<th>Porcentaje</th><th>Fecha</th><th>Detalle</th>
+</tr></thead>
+<tbody id="recordsBody"></tbody>
+</table>
+</div>
+<div id="recordDetail"></div>
+</section>
+</main>
+<footer>Evaluación educativa · Perfil de Proyecto · Uso académico</footer>
+
+<script>
+"use strict";
+
+/*
+ CONFIGURACIÓN DOCENTE
+ Cambia esta contraseña antes de utilizar el archivo.
+ En un HTML local la contraseña no es secreta: un alumno puede inspeccionar
+ el código. Para seguridad real se necesita autenticación en el servidor.
+*/
+const TEACHER_PASSWORD = "Cambiar2026!";
+const DB_KEY = "evaluacion_perfil_proyecto_v1";
+const DURATION_SECONDS = 45 * 60;
+
+const rawQuestions = [
+["El título de un proyecto debe comunicar claramente su propósito. ¿Cuál es el más preciso para una aplicación de control financiero?",
+["Sistema informático moderno","Desarrollo de una aplicación web para registrar ingresos y gastos con visualización de datos en El Alto","La tecnología en Bolivia","Página de Internet"],1],
+["Un proyecto promete crear una guía turística digital para promocionar atractivos de El Alto. ¿Qué componente del título expresa principalmente el resultado?",
+["La localización","El presupuesto","Guía turística digital","La fecha de entrega"],2],
+["¿Cuál es la principal función de la localización dentro del título de un proyecto?",
+["Indicar dónde se desarrollará o aplicará","Explicar todas las herramientas utilizadas","Reemplazar el objetivo general","Presentar las conclusiones"],0],
+["El título menciona una aplicación para controlar ingresos y gastos, pero el objetivo describe una página para promocionar un supermercado. ¿Qué problema existe?",
+["Los objetivos específicos son demasiados","La metodología es descriptiva","El cronograma es innecesario","Hay falta de coherencia entre el título y los objetivos"],3],
+["¿Qué pregunta ayuda a comprobar si el título está delimitado correctamente?",
+["¿Cuántos colores tendrá el logotipo?","¿Qué resultado se desarrollará, para qué y en qué lugar?","¿Qué nota obtendrá el estudiante?","¿Qué conclusión se escribirá primero?"],1],
+["Un estudiante titula su proyecto “Tecnología”. ¿Qué cambio mejoraría el título?",
+["Añadir un título más específico que indique producto, propósito y contexto","Dejarlo así para abarcar más temas","Eliminar el objeto del proyecto","Escribir solamente el nombre del estudiante"],0],
+["¿Cuál es la diferencia más importante entre título y objetivo general?",
+["No existe ninguna diferencia","El título siempre contiene la metodología completa","El título identifica el proyecto y el objetivo expresa lo que se pretende lograr","El objetivo general solo indica el lugar"],2],
+["¿Qué objetivo general está mejor formulado para una web de supermercado?",
+["Aprender muchas cosas de informática","Usar todos los lenguajes disponibles","Hacer una web porque está de moda","Desarrollar e implementar una página informativa con catálogo, promociones y contacto para un supermercado de Cosmos 79 durante 2026"],3],
+["En el objetivo “desarrollar una web mediante HTML, CSS y JavaScript”, ¿qué parte explica principalmente el cómo?",
+["Desarrollar una web","Mediante HTML, CSS y JavaScript","Durante 2026","Para el supermercado"],1],
+["Si un objetivo indica “en la zona Cosmos 79, municipio de Achocalla”, ¿a qué pregunta responde?",
+["¿Qué?","¿Cómo?","¿Dónde?","¿Cuánto cuesta?"],2],
+["¿Qué información corresponde a la dimensión “cuándo” del objetivo?",
+["Durante la gestión 2026","Catálogo de productos","Herramientas de programación","Necesidades de los clientes"],0],
+["¿Por qué un objetivo general no debe confundirse con una lista de tareas?",
+["Porque no puede mencionar resultados","Porque solo puede tener cinco palabras","Porque debe ser una pregunta","Porque sintetiza el resultado principal y las tareas se detallan en objetivos específicos"],3],
+["¿Cuál de los siguientes es un objetivo específico verificable?",
+["Hacer algo muy interesante","Recopilar y organizar productos, categorías, precios y promociones del supermercado","Mejorar todo el negocio sin medir resultados","Usar la mejor tecnología del mundo"],1],
+["Antes de diseñar la interfaz, el equipo necesita conocer las necesidades reales del negocio. ¿Qué acción es más adecuada?",
+["Publicar la web inmediatamente","Comprar un dominio sin consultar","Realizar un diagnóstico y recopilar requerimientos","Escribir las conclusiones finales"],2],
+["¿Qué secuencia de trabajo es más lógica para desarrollar la página?",
+["Diagnóstico, recopilación de datos, diseño, desarrollo, pruebas e implementación","Publicación, conclusiones, diagnóstico y diseño","Compra de equipos, publicación y después análisis","Anexos, bibliografía, publicación y recién entrevista"],0],
+["El dueño solicita que los productos estén agrupados por tipo. ¿Qué objetivo específico responde directamente a esa necesidad?",
+["Elaborar una encuesta sobre turismo","Redactar la bibliografía","Diseñar un cronograma sin tareas","Implementar un catálogo organizado por categorías"],3],
+["¿Qué evidencia permite comprobar mejor que la web es adaptable a móviles?",
+["Una lista de ideas sin probar","Pruebas de visualización en pantallas de diferentes tamaños","Una entrevista sin preguntas técnicas","Un título con más palabras"],1],
+["¿Por qué se debe capacitar al personal del supermercado?",
+["Para evitar que conozca el sistema","Para sustituir todas las pruebas","Para que pueda actualizar correctamente la información publicada","Para convertir el sitio en una base de datos sin controles"],2],
+["Si las promociones publicadas ya vencieron, ¿qué mejora es más pertinente?",
+["Establecer un procedimiento de actualización y revisión de vigencia","Eliminar el contacto del negocio","Dejar la información sin cambios","Ocultar todos los productos"],0],
+["¿Cuál es la mejor prueba para verificar el formulario de contacto?",
+["Cambiar el color del fondo únicamente","Leer la bibliografía","Contar las páginas del informe","Enviar datos de prueba y comprobar validación y recepción de la información"],3],
+["¿Por qué conviene organizar los productos en categorías?",
+["Para que la página tenga más texto aunque no sea útil","Para facilitar la búsqueda y mejorar la navegación del usuario","Para evitar actualizar precios","Para sustituir el objetivo general"],1],
+["El proyecto debe mostrar dirección y horarios. ¿Qué criterio debe priorizarse?",
+["Usar datos inventados para completar el diseño","Mostrar información distinta en cada página","Publicar datos verificados, claros y actualizados","Ocultar la ubicación"],2],
+["¿Qué significa centralizar la información del supermercado en la página?",
+["Reunir catálogo, promociones, servicios y contacto en un espacio digital organizado","Guardar cada dato en una página sin relación","Eliminar toda información del negocio","Reemplazar el diagnóstico por publicidad"],0],
+["¿Qué riesgo existe si se publica el número personal del propietario sin autorización?",
+["La página necesariamente dejará de funcionar","El catálogo se ordenará mal","El cronograma se completará automáticamente","Se puede vulnerar la privacidad; deben autorizarse y protegerse los datos"],3],
+["¿Qué debería hacerse antes de publicar precios y ofertas?",
+["Copiar datos de cualquier negocio","Verificar su exactitud y acordar quién los actualizará","Evitar consultar al responsable","Publicarlos sin fechas de vigencia"],1],
+["¿Por qué las pruebas deben realizarse antes de la implementación definitiva?",
+["Para aumentar la cantidad de objetivos","Para reemplazar la entrevista","Para detectar errores de funcionamiento, navegación y visualización","Para evitar que el personal aprenda a usarla"],2],
+["¿Qué metodología se propone en el contenido para avanzar ordenadamente en el desarrollo?",
+["Desarrollo por etapas, desde el análisis hasta la evaluación","Publicación sin planificación","Redacción exclusiva de anexos","Diseño al azar"],0],
+["¿Por qué es pertinente el método descriptivo en este proyecto?",
+["Porque garantiza ventas automáticamente","Porque sustituye todos los instrumentos","Porque demuestra causalidad en cualquier circunstancia","Porque permite describir la situación actual y las necesidades del supermercado"],3],
+["¿Qué pregunta sería más apropiada para entrevistar al administrador?",
+["¿Qué color te gusta más en los videojuegos?","¿Qué productos, promociones y servicios necesita comunicar en la web?","¿Qué tema prefieres para vacaciones?","¿Cuántos capítulos tiene una novela?"],1],
+["¿Cuál es una ventaja de observar directamente la atención en el supermercado?",
+["Permite inventar la opinión de los clientes","Evita registrar información","Permite conocer prácticas reales y detectar necesidades que podrían pasar inadvertidas","Hace innecesaria cualquier planificación"],2],
+["¿Cuándo sería útil aplicar una encuesta a los clientes?",
+["Cuando se necesita conocer opiniones sobre la utilidad de una página web","Para sustituir el código de programación","Para calcular automáticamente todos los gastos","Para decidir la contraseña del docente"],0],
+["¿Qué instrumento es más adecuado para registrar sistemáticamente lo observado?",
+["Una lista de conclusiones inventadas","Un archivo sin fecha ni contenido","Una contraseña","Una ficha de observación"],3],
+["¿Qué instrumento ayuda a mantener una entrevista ordenada?",
+["Un cronograma de publicación","Una guía de entrevista con preguntas preparadas","Una captura de pantalla del catálogo","Una lista de precios sin contexto"],1],
+["El equipo encuesta a 10 clientes y concluye que todos los habitantes de la ciudad quieren la web. ¿Cuál es la crítica más válida?",
+["La encuesta siempre es inútil","La conclusión es correcta porque toda muestra representa a todos","La muestra puede ser insuficiente o sesgada para generalizar a toda la ciudad","La encuesta reemplaza la observación"],2],
+["¿Por qué conviene contrastar entrevista, observación y encuesta cuando se utilizan?",
+["Porque distintas fuentes pueden complementar y contrastar los hallazgos","Porque todas deben dar respuestas idénticas","Porque evita analizar los resultados","Porque permite ignorar los datos contradictorios"],0],
+["¿Qué debería incluir un cronograma de actividades útil?",
+["Solo el título del proyecto","Únicamente la fecha de exposición","Una lista de deseos sin fechas","Actividades, responsables, plazos y seguimiento del avance"],3],
+["Si las pruebas detectan fallas de navegación, ¿qué decisión es más adecuada?",
+["Publicar inmediatamente sin cambios","Corregir las fallas, repetir las pruebas y documentar resultados","Eliminar el objetivo de pruebas","Afirmar que la web funciona porque abre"],1],
+["¿Qué caracteriza una conclusión esperada bien redactada antes de terminar el proyecto?",
+["Afirmar que todas las metas ya se cumplieron sin evidencia","Copiar una conclusión de otro proyecto","Indicar resultados que se espera alcanzar, sin presentarlos como comprobados","Incluir únicamente los costos"],2],
+["¿Qué función cumplen las recomendaciones esperadas?",
+["Proponer acciones útiles para mantener, mejorar o dar continuidad al proyecto","Reemplazar los resultados de las pruebas","Demostrar que no hacen falta usuarios","Enumerar solamente los errores ortográficos"],0],
+["¿Cuál es la función principal de la bibliografía?",
+["Enumerar las computadoras disponibles","Presentar los nombres de los estudiantes","Describir exclusivamente la interfaz","Identificar las fuentes consultadas que fundamentan el proyecto"],3],
+["¿Qué contenido corresponde mejor a los anexos?",
+["El objetivo general repetido muchas veces","Instrumentos, registros fotográficos autorizados y evidencias complementarias","Solo el título en letras grandes","Una bibliografía inventada"],1],
+["¿Por qué se debe registrar la fuente de información consultada?",
+["Para aumentar artificialmente las páginas","Para evitar leer las fuentes","Para permitir verificar el origen de las ideas y reconocer la autoría","Para sustituir la metodología"],2],
+["Si el proyecto usa fotografías del supermercado, ¿qué práctica es más responsable?",
+["Obtener autorización cuando corresponda y evitar divulgar información privada","Publicar rostros y datos personales sin consultar","Inventar la fecha y el lugar de las fotografías","Eliminar toda referencia a las imágenes"],0],
+["El cronograma se retrasa porque el equipo no definió responsables. ¿Qué aprendizaje es el más relevante?",
+["Que la bibliografía debe escribirse primero siempre","Que no se deben hacer pruebas","Que las entrevistas no aportan nada","Que planificar tareas, responsables y plazos facilita el seguimiento"],3],
+["¿Cuál sería un indicador concreto para evaluar el funcionamiento de la web?",
+["La cantidad de colores que le gustan al programador","El porcentaje de pruebas funcionales superadas y la correcta visualización en móviles","El número de páginas de la bibliografía","La longitud del título sin otros criterios"],1]
+];
+
+const $ = id => document.getElementById(id);
+const shuffle = arr => {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+};
+const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+})[c]);
+
+let questions = [];
+let student = {};
+let startedAt = null;
+let deadline = null;
+let timerHandle = null;
+let submitted = false;
+
+$("studentDate").value = new Date().toLocaleDateString("es-BO");
+$("studentForm").addEventListener("submit", e => {
+  e.preventDefault();
+  if (!e.currentTarget.reportValidity()) return;
+  if (rawQuestions.length !== 45) {
+    alert("Error de configuración: la evaluación debe contener 45 preguntas.");
+    return;
+  }
+  student = {
+    name:$("studentName").value.trim(),
+    course:$("studentCourse").value.trim(),
+    code:$("studentCode").value.trim()
+  };
+  if (!student.name || !student.course) return;
+
+  questions = shuffle(rawQuestions.map((q,i) => {
+    const opts = shuffle(q[1].map((text,index)=>({text,correct:index===q[2]})));
+    return {id:i+1,question:q[0],options:opts};
+  }));
+
+  $("questions").innerHTML = questions.map((q,i)=>`
+    <article class="question" id="q-${i}">
+      <small>Pregunta ${i+1} de 45 · 1 punto</small>
+      <h3>${escapeHTML(q.question)}</h3>
+      ${q.options.map((opt,j)=>`
+        <label class="option">
+          <input type="radio" name="q${i}" value="${j}">
+          <span>${String.fromCharCode(65+j)}. ${escapeHTML(opt.text)}</span>
+        </label>`).join("")}
+    </article>`).join("");
+
+  $("registration").hidden = true;
+  $("exam").hidden = false;
+  $("result").hidden = true;
+  submitted = false;
+  startedAt = Date.now();
+  deadline = startedAt + DURATION_SECONDS*1000;
+  updateProgress();
+  $("examForm").addEventListener("change",updateProgress);
+  timerHandle = setInterval(updateTimer,500);
+  updateTimer();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+function updateProgress(){
+  const answered = questions.reduce((sum,q,i)=>
+    sum + ($(`input[name="q${i}"]:checked`) ? 1:0),0);
+  $("answered").textContent = answered;
+  $("progressBar").style.width = (answered/45*100)+"%";
+}
+function updateTimer(){
+  if(submitted) return;
+  const remaining = Math.max(0,Math.ceil((deadline-Date.now())/1000));
+  const min = Math.floor(remaining/60);
+  const sec = remaining%60;
+  $("timer").textContent = `${String(min).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+  $("timer").classList.toggle("warning",remaining<=300);
+  if(remaining<=0) finishExam(true);
+}
+$("reviewBtn").addEventListener("click",()=>{
+  const first = questions.findIndex((q,i)=>!$(`input[name="q${i}"]:checked`));
+  if(first<0){alert("Todas las preguntas tienen respuesta.");return;}
+  $(`q-${first}`).scrollIntoView({behavior:"smooth",block:"center"});
+  $(`q-${first}`).style.borderColor="#2864c5";
+});
+
+$("examForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  if(submitted)return;
+  const unanswered=questions.filter((q,i)=>!$(`input[name="q${i}"]:checked`)).length;
+  if(unanswered && Date.now()<deadline &&
+     !confirm(`Quedan ${unanswered} preguntas sin responder. ¿Deseas finalizar?`)) return;
+  finishExam(false);
+});
+
+function getRecords(){
+  try{
+    const data=JSON.parse(localStorage.getItem(DB_KEY)||"[]");
+    return Array.isArray(data)?data:[];
+  }catch{return [];}
+}
+function finishExam(timeExpired){
+  if(submitted)return;
+  submitted=true;
+  clearInterval(timerHandle);
+  const answers = questions.map((q,i)=>{
+    const selected=$(`input[name="q${i}"]:checked`);
+    const chosen=selected ? Number(selected.value):-1;
+    const correct=q.options.findIndex(o=>o.correct);
+    return {question:q.question,chosen:chosen<0?"Sin responder":q.options[chosen].text,
+      correctAnswer:q.options[correct].text,correct:chosen===correct};
+  });
+  const score=answers.filter(a=>a.correct).length;
+  const now=new Date();
+  const record={
+    id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())+Math.random()),
+    name:student.name,course:student.course,code:student.code,
+    score,percentage:Math.round(score/45*100),
+    date:now.toLocaleString("es-BO"),elapsedSeconds:Math.min(
+      DURATION_SECONDS,Math.max(0,Math.floor((Date.now()-startedAt)/1000))),
+    timeExpired,answers
+  };
+  let saveWarning="";
+  try{
+    const records=getRecords();
+    records.push(record);
+    localStorage.setItem(DB_KEY,JSON.stringify(records));
+  }catch{
+    saveWarning="<p class='bad'>No se pudo guardar en este navegador. Exporta o imprime el resultado ahora.</p>";
+  }
+
+  $("exam").hidden=true;
+  $("result").hidden=false;
+  $("resultDetails").innerHTML=`
+    <div class="stats">
+      <div class="stat">Nota: ${score}/45</div>
+      <div class="stat">Porcentaje: ${record.percentage}%</div>
+      <div class="stat">Correctas: ${score}</div>
+      <div class="stat">Incorrectas o vacías: ${45-score}</div>
+    </div>
+    <p><strong>Estudiante:</strong> ${escapeHTML(student.name)}</p>
+    <p><strong>Curso:</strong> ${escapeHTML(student.course)}</p>
+    <p><strong>Fecha:</strong> ${escapeHTML(record.date)}</p>
+    <p>${timeExpired?"El tiempo terminó.":"Evaluación finalizada."}</p>
+    ${saveWarning}
+    <h3>Revisión de respuestas</h3>
+    ${answers.map((a,i)=>`<div class="question">
+      <strong>${i+1}. ${escapeHTML(a.question)}</strong>
+      <p class="${a.correct?'good':'bad'}">${a.correct?'Correcta':'Incorrecta o sin responder'}</p>
+      <p>Tu respuesta: ${escapeHTML(a.chosen)}</p>
+      ${!a.correct?`<p>Respuesta correcta: ${escapeHTML(a.correctAnswer)}</p>`:""}
+    </div>`).join("")}`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("printResult").addEventListener("click",()=>window.print());
+$("newExam").addEventListener("click",()=>{
+  if(!confirm("¿Volver al inicio? El resultado anterior debe estar guardado o impreso."))return;
+  clearInterval(timerHandle);
+  $("result").hidden=true;
+  $("registration").hidden=false;
+  $("studentForm").reset();
+  $("studentDate").value=new Date().toLocaleDateString("es-BO");
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* PANEL DOCENTE */
+let loginAttempts=0;
+let lockedUntil=0;
+$("loginForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  if(Date.now()<lockedUntil){
+    $("loginMessage").textContent="Acceso temporalmente bloqueado. Intenta más tarde.";
+    return;
+  }
+  if($("teacherPassword").value===TEACHER_PASSWORD){
+    loginAttempts=0;
+    $("loginMessage").textContent="";
+    $("teacherPassword").value="";
+    $("teacherLogin").hidden=true;
+    $("teacherPanel").hidden=false;
+    renderRecords();
+  }else{
+    loginAttempts++;
+    $("loginMessage").textContent="Contraseña incorrecta.";
+    if(loginAttempts>=5){
+      lockedUntil=Date.now()+60000;
+      loginAttempts=0;
+      $("loginMessage").textContent="Demasiados intentos. Espera un minuto.";
+    }
+  }
+});
+$("logout").addEventListener("click",()=>{
+  $("teacherPanel").hidden=true;
+  $("teacherLogin").hidden=false;
+  $("recordDetail").innerHTML="";
+});
+function renderRecords(){
+  const records=getRecords();
+  $("recordCount").textContent=records.length;
+  $("averageScore").textContent=records.length?
+    (records.reduce((s,r)=>s+Number(r.score||0),0)/records.length).toFixed(2):"0";
+  $("recordsBody").innerHTML=records.map((r,i)=>`<tr>
+    <td>${escapeHTML(r.name)}</td><td>${escapeHTML(r.course)}</td>
+    <td>${Number(r.score)||0}/45</td><td>${Number(r.percentage)||0}%</td>
+    <td>${escapeHTML(r.date)}</td>
+    <td><button type="button" class="btn-secondary" data-detail="${i}">Ver</button></td>
+  </tr>`).join("");
+  $("recordsBody").querySelectorAll("[data-detail]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const r=records[Number(btn.dataset.detail)];
+      $("recordDetail").innerHTML=`<h3>Detalle: ${escapeHTML(r.name)}</h3>
+      <p>Curso: ${escapeHTML(r.course)} | Nota: ${Number(r.score)}/45</p>
+      ${r.answers.map((a,i)=>`<p><strong>${i+1}. ${escapeHTML(a.question)}</strong><br>
+      Respuesta: ${escapeHTML(a.chosen)}<br>
+      Correcta: ${escapeHTML(a.correctAnswer)}<br>
+      Resultado: ${a.correct?"Correcto":"Incorrecto"}</p>`).join("")}`;
+    });
+  });
+}
+function downloadFile(filename,content,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=filename;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+$("exportCsv").addEventListener("click",()=>{
+  const records=getRecords();
+  const cell=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const rows=[["Nombre","Curso","Código","Nota","Porcentaje","Fecha","Tiempo agotado"],
+    ...records.map(r=>[r.name,r.course,r.code,r.score,r.percentage,r.date,r.timeExpired?"Sí":"No"])];
+  const csv="\uFEFF"+rows.map(row=>row.map(cell).join(";")).join("\r\n");
+  downloadFile("resultados_evaluacion.csv",csv,"text/csv;charset=utf-8");
+});
+$("exportJson").addEventListener("click",()=>{
+  downloadFile("respaldo_evaluacion.json",JSON.stringify(getRecords(),null,2),
+    "application/json;charset=utf-8");
+});
+$("clearRecords").addEventListener("click",()=>{
+  if(!confirm("¿Borrar permanentemente todos los registros de este navegador?"))return;
+  if(prompt("Escribe BORRAR para confirmar:")!=="BORRAR")return;
+  localStorage.removeItem(DB_KEY);
+  $("recordDetail").innerHTML="";
+  renderRecords();
+});
+</script>
+</body>
+</html>
